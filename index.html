@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josh's Burnout Hideout</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body>
+    
+    <section class="section section1">
+        <div class="content-left">
+            <h1 class="title wacky-text">Josh's Burnout Hideout</h1>
+            <p class="description">Welcome to my burnout space where I'm too burnt out for full projects but still want to feel productive. Enjoy the <span class="shake">randomness</span> and unplolished work</p>
+            
+        </div>
+        <div class="floating-shapes shapes1"></div>
+    </section>
+
+    <div class="slanted-divider"></div>
+
+    <section class="section section2">
+        <div class="pulse-bars top"></div>
+        <div class="pulse-bars bottom"></div>
+        <div class="content-left">
+            <h2 class="title">What I'm Listening To</h2>
+            <p class="description">Here's my current jam on Spotify:</p>
+        </div>
+        <div class="content-right song-container" id="nowPlaying">
+            <p>Loading...</p>
+        </div>
+    </section>
+
+    <div class="slanted-divider"></div>
+
+    
+    <section class="section section3">
+        <h2 class="title">The Shape Pit of Chaos</h2>
+        <p class="description">Drag your mouse through the chaos below!</p>
+        <canvas id="ballPitCanvas"></canvas>
+    </section>
+    <div class="slanted-divider"></div>
+    <section id="terminal-section">
+        <div id="window-bar">
+            <div id="window-title">cmd.exe</div>
+            <div id="window-controls">
+                <button id="minimize">-</button>
+                <button id="maximize">□</button>
+                <button id="close">×</button>
+            </div>
+        </div>
+    
+        <div id="terminal">
+            <pre id="output"></pre>
+            <div class="input-line">
+                <span id="prompt">C:\\Users\\enter_your_name></span>
+                <input type="text" id="input" autofocus autocomplete="off">
+            </div>
+        </div>
+    </section>
+    <div class="slanted-divider"></div>
+    <section class="section section4">
+        <h2 class="illusion-title">random patterns <br>i decided to do lol</h2>
+        <div class="illusion-container">
+            <div class="checkerboard-container">
+                <canvas id="checkerboardCanvas"></canvas>
+            </div>
+            <div class="checkerboard-container">
+                <canvas id="checkerboardCanvas2"></canvas>
+            </div>
+            <div class="checkerboard-container">
+                <canvas id="checkerboardCanvas3"></canvas>
+            </div>
+            <div class="checkerboard-container">
+                <canvas id="checkerboardCanvas4"></canvas>
+            </div>
+        </div>
+    </section>
+    <div class="slanted-divider"></div>
+    
+    
+    <canvas id="ballPitCanvas"></canvas>
+    
+    
+    
+    
+    
+    <div class="floating-shapes shapes4"></div>
+</section>
+<section class="section section5">
+    <h2 class="dog-title">Endless Dogs!</h2>
+    <div class="dog-scroll-container">
+        <div class="dog-images">
+            
+        </div>
+    </div>
+</section>
+
+<canvas id="ballPitCanvas"></canvas>
+
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="js/ballpit.js"></script>
+    <script src="js/dogs.js"></script>
+    <script src="js/terminal.js"></script>
+    <script>
+        (function() {
+            const canvasConfigs = [
+                { id: 'checkerboardCanvas', patternType: 'checkerboard' },
+                { id: 'checkerboardCanvas2', patternType: 'stripes' },
+                { id: 'checkerboardCanvas3', patternType: 'circles' },
+                { id: 'checkerboardCanvas4', patternType: 'grid' }
+            ];
+        
+            function drawPattern(canvasId, patternType, offsetX = 0, offsetY = 0) {
+                const canvas = document.getElementById(canvasId);
+                const ctx = canvas.getContext('2d');
+                const size = 8; 
+                const tileSize = 50; 
+                canvas.width = size * tileSize;
+                canvas.height = size * tileSize;
+        
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (patternType === 'checkerboard') {
+                    
+                    for (let row = 0; row < size; row++) {
+                        for (let col = 0; col < size; col++) {
+                            const x = col * tileSize + offsetX;
+                            const y = row * tileSize + offsetY;
+                            const isDark = (row + col) % 2 === 0;
+                            ctx.fillStyle = isDark ? '#2c3e50' : '#ecf0f1';
+                            ctx.fillRect(x, y, tileSize, tileSize);
+                        }
+                    }
+                } else if (patternType === 'stripes') {
+                    
+                    for (let i = 0; i < size; i++) {
+                        const x = 0;
+                        const y = i * tileSize + offsetY;
+                        ctx.fillStyle = (i % 2 === 0) ? '#ecf0f1' : '#2c3e50';
+                        ctx.fillRect(x, y, canvas.width, tileSize);
+                    }
+                } else if (patternType === 'circles') {
+                   
+                    for (let row = 0; row < size; row++) {
+                        for (let col = 0; col < size; col++) {
+                            const x = col * tileSize + offsetX;
+                            const y = row * tileSize + offsetY;
+                            ctx.beginPath();
+                            ctx.arc(x + tileSize / 2, y + tileSize / 2, tileSize / 3, 0, Math.PI * 2);
+                            ctx.fillStyle = (row + col) % 2 === 0 ? '#ecf0f1' : '#2c3e50';
+                            ctx.fill();
+                        }
+                    }
+                } else if (patternType === 'grid') {
+                    // Grid pattern
+                    for (let row = 0; row < size; row++) {
+                        for (let col = 0; col < size; col++) {
+                            const x = col * tileSize + offsetX;
+                            const y = row * tileSize + offsetY;
+                            ctx.strokeStyle = '#ecf0f1';
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(x, y, tileSize, tileSize);
+                        }
+                    }
+                }
+            }
+        
+            function handleMouseMove(event, canvasId, patternType) {
+                const canvas = document.getElementById(canvasId);
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+        
+                
+                const offsetX = (mouseX - canvas.width / 2) / 10;
+                const offsetY = (mouseY - canvas.height / 2) / 10;
+        
+                drawPattern(canvasId, patternType, offsetX, offsetY);
+            }
+        
+            
+            canvasConfigs.forEach(config => {
+                drawPattern(config.id, config.patternType);
+                const canvas = document.getElementById(config.id);
+                canvas.addEventListener('mousemove', (e) => handleMouseMove(e, config.id, config.patternType));
+            });
+        })();
+        </script>
+    
+        
+        
+</body>
+</html>
